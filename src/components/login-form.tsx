@@ -13,11 +13,16 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"
+
 
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & {onLogin?: (values: {email: string; password: string;}) => void}) {
+
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -25,7 +30,10 @@ export function LoginForm({
           <CardTitle className="text-xl">Welcome back</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            props.onLogin?.({email, password});
+          }}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -33,6 +41,7 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </Field>
@@ -45,7 +54,7 @@ export function LoginForm({
                   >
                   </a>
                 </div>
-                <Input id="password" type="password" required />  Forgot your password?
+                <Input id="password" type="password" required onChange={(e) => setPassword(e.target.value)} />  Forgot your password?
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
